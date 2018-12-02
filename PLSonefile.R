@@ -1,8 +1,8 @@
 X_wine<-matrix(c(7, 7, 13, 7, 4, 3, 14, 7, 10, 5, 12, 5, 16, 7, 11, 3, 13, 3, 10, 3 ),5,4, byrow=TRUE)
 Y_wine<-matrix(c(14, 7, 8, 10, 7, 6, 8, 5, 5, 2, 4, 7, 6, 2, 4 ),5,3, byrow=TRUE)
 
-mX<-as.matrix(X_wine)
-mY<-as.matrix(Y_wine)
+mX<-as.matrix(mtcars[,1:5])
+mY<-as.matrix(mtcars[,6:7])
 
 mX<-scale(mX, center=TRUE, scale=TRUE)
 mY<-scale(mY, center=TRUE, scale=TRUE)
@@ -10,28 +10,27 @@ mY<-scale(mY, center=TRUE, scale=TRUE)
 
 complatentscores <- function(X,Y){
   
-  u <- rnorm(length(mY[,1]))
+  u <- mY[,1]
   
   t <- NA
   told <- NA
   compteur <- 1
-  while(is.na(t) || is.na(told) || sum((t-told)^2)>(10^(-14))){
+  while(is.na(t)|| is.na(told) || sum((t-told)^2)>(10^(-7))){
     
     told <- t
     
     x_weights <- t(X)%*%u
-    x_weights <- x_weights/sqrt(sum(x_weights^2))
-    
+    x_weights <- x_weights/as.numeric(sqrt(t(x_weights)%*%x_weights))
     t <- X%*%x_weights
-    t <- t/sqrt(sum(t^2))
+    t <- t/as.numeric(sqrt(t(t)%*%t))
 
     y_weights <- t(Y)%*%t
-    y_weights <- y_weights/sqrt(sum(y_weights^2))
+    y_weights <- y_weights/as.numeric(sqrt(t(y_weights)%*%y_weights))
     
     u <- Y%*%y_weights
     
    
-    
+    print(compteur)
     compteur <- compteur +1
   }
   result <- list(t_scores=t,u_scores=u,x_weights=x_weights,y_weights=y_weights)
@@ -71,6 +70,7 @@ for (i in 1:comp.max) {
   
   
 }
+
 
 print("T matrix :")
 print(T.scores)
