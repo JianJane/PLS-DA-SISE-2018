@@ -8,10 +8,13 @@ source("predict.R")
 
 # --------------------------prep of feature matrix X and response matrix Y-------
 # ------------------------------------------------------------------------------
+# preration data Wine tasting
 
-#source("data_prep.R")
- 
-source("data_prep_wine.R")
+source("data_prep.R")
+#source("data_prep_wine.R")
+
+
+
 
 #--------------------------calculating the 1st latent variables 'u', 't' and loading-----------------
 #-------------------------call user defined function to find first latent scores
@@ -68,8 +71,8 @@ B <- matrix(NA,1)
       
       #LV : here i store the b scalars into B matrix (as diagonal terms)
       B <- diag(c(diag(B),ml[4]))
-      #print(cat('load B', n))
       
+      #print(cat('load B', n))
       #n_itr<-n_itr+1
       #print(cat("number of iteration before convergence: ", n_itr))
       #print(log10(sum(abs(E_))))
@@ -83,13 +86,13 @@ B <- matrix(NA,1)
   p_loads<- cbind(p_loads,p)
   
   # call "predict" function to fit the new feature matrix
-  X_tst <- mX
+ # X_tst <- mX
   
   
-  Y_pd<-predict(X_tst,y_weights,p_loads,B)
-  Y-pd
+#  Y_pd<-predict(X_tst,y_weights,p_loads,B)
+  
 
- sapply(1:length(Y_pd), function(x) {which.max(Y_pd[x,])})
+ #sapply(1:length(Y_pd), function(x) {which.max(Y_pd[x,])})
   
 
   
