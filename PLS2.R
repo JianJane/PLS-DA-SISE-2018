@@ -1,6 +1,6 @@
 library(Matrix)
 library(dummies)
-pls2 <- function(X,Y,ncomp=2,method=c("SIMPLS","classic"),tol=10^-9,scale=TRUE){
+pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9,scale=TRUE){
   
   instance <- list()
   instance$X <- X
@@ -14,6 +14,7 @@ pls2 <- function(X,Y,ncomp=2,method=c("SIMPLS","classic"),tol=10^-9,scale=TRUE){
   if(isfactor){
     
     Y <- dummy(Y)
+    instance$Y.dummy <- Y
   }
   
   
@@ -27,7 +28,7 @@ pls2 <- function(X,Y,ncomp=2,method=c("SIMPLS","classic"),tol=10^-9,scale=TRUE){
     
   }
   
-  if(method==c("SIMPLS","classic") || method=="SIMPLS"){
+  if(method=="SIMPLS"){
     # ---------------------------------PLS-2 Algorithm using SVD-------------------------------
     # -----------------------------------------------------------------------------------------
     
@@ -102,27 +103,26 @@ pls2 <- function(X,Y,ncomp=2,method=c("SIMPLS","classic"),tol=10^-9,scale=TRUE){
         
         #Intialisation
         u <- Y[,1]
-        t <- NA
-        told <- NA
+        x_weights <- NA
+        x_weightsold <- NA
         
-        while(is.na(t)|| is.na(told) || sum((t-told)^2)>(tol)){
+        while(is.na(x_weights)|| is.na(x_weightsold) || sum((x_weights-x_weightsold)^2)>(tol)){
           
-          told <- t
+          x_weightsold <- x_weights
           
           #Computation of X weights
-          x_weights <- t(X)%*%u
-          x_weights <- x_weights/as.numeric(sqrt(t(x_weights)%*%x_weights))
+          x_weights <- t(X)%*%u/ sum(u^2)
+          x_weights <- x_weights/sqrt(sum(x_weights^2))
           
           #Computation of T latent vector
           t <- X%*%x_weights
-          t <- t/as.numeric(sqrt(t(t)%*%t))
           
           #Computation of Y weights
-          y_weights <- t(Y)%*%t
-          y_weights <- y_weights/as.numeric(sqrt(t(y_weights)%*%y_weights))
+          y_weights <- t(Y)%*%t/sum(t^2)
+          
           
           #Computation of u latent vector
-          u <- Y%*%y_weights
+          u <- Y%*%y_weights/sum(y_weights^2)
           
           
         }
@@ -148,14 +148,14 @@ pls2 <- function(X,Y,ncomp=2,method=c("SIMPLS","classic"),tol=10^-9,scale=TRUE){
         X.weights[,i] <-latentlist$x_weights
         Y.weights[,i] <- latentlist$y_weights
         
-        b <- as.numeric(t(latentlist$t_scores)%*%latentlist$u_scores)
+        b <- as.numeric(t(latentlist$u_scores)%*%latentlist$t_scores)
         B[i,i] <- b
         
-        p <- t(E0)%*%latentlist$t_scores
+        p <- t(E0)%*%latentlist$t_scores/sum(latentlist$t_scores^2)
         P.loadings[,i] <-p
         
         E0 <- E0-(latentlist$t_scores%*%t(p))
-        F0 <- F0-b*(latentlist$t_scores%*%t(latentlist$y_weights))
+        F0 <- F0-(latentlist$t_scores%*%t(latentlist$y_weights))
         
       }
       
@@ -169,7 +169,10 @@ pls2 <- function(X,Y,ncomp=2,method=c("SIMPLS","classic"),tol=10^-9,scale=TRUE){
       instance$B.mat <- B
       instance$mode <- "classic"
     }else{
+      
       stop("Error, choose a proper PLS method.")
+      
+      
     }
     
   }
@@ -182,10 +185,12 @@ pls2 <- function(X,Y,ncomp=2,method=c("SIMPLS","classic"),tol=10^-9,scale=TRUE){
 }
 
 predict.PLS2 <- function(pls2Object,newdata){
+  newdata <- as.matrix(scale(newdata))
   instance <- list()
-  if(pls2Object$mode=="classic"){
+  if(pls2Object$mode=="classic" || pls2Object$mode=="test" ){
+    
     Bpls <- pls2Object$weights$X%*%solve(t(pls2Object$loadings)%*%pls2Object$weights$X)%*%t(pls2Object$weights$Y)
-    pred <- as.matrix(newdata)%*%Bpls
+    pred <- newdata%*%Bpls
     
     
     instance$B.hat <- Bpls
@@ -196,6 +201,7 @@ predict.PLS2 <- function(pls2Object,newdata){
     
     return(instance)
   }else{
+    
     if(pls2Object$mode=="SVD"){
       inv_pw<-inv(t(pls2Object$loadings$X)%*%pls2Object$weights$X)
       
@@ -203,7 +209,7 @@ predict.PLS2 <- function(pls2Object,newdata){
       
       Bpls <- R.loadings %*% t(pls2Object$weights$Y)
       
-      pred <- as.matrix(newdata)%*%Bpls
+      pred <- newdata%*%Bpls
       
       instance$B.hat <- Bpls
       instance$pred <- pred
@@ -212,7 +218,10 @@ predict.PLS2 <- function(pls2Object,newdata){
       class(instance) <- "predict"
       return(instance)
     }else{
+      
       stop("Error with prediction object, check prediction mode.")
+        
+      
     }
   }
   
