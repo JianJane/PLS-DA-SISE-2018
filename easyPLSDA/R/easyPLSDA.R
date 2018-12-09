@@ -31,7 +31,7 @@ plsDA <- function(formula,data=NULL,ncomp=2,method="classic",tol=10^-9,scale=TRU
 
   }
 
-  computedPls <- computePls2(X,Y,ncomp=ncomp,method=method,tol=tol)
+  computedPls <- pls2(X,Y,ncomp=ncomp,method=method,tol=tol)
 
   instance <- append(instance,computedPls)
 
