@@ -141,7 +141,6 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
       }
 
 
-
       rownames(T.scores) <- rownames(X)
       colnames(T.scores) <- paste("COMP",1:ncol(T.scores))
       instance$scores$X <- T.scores
@@ -161,6 +160,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
 
     }
+
   }
   class(instance) <- "PLS2Reg"
   return(instance)
