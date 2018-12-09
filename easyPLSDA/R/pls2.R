@@ -142,11 +142,11 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
 
 
-      rownames(T.scores) <- names.X
+      rownames(T.scores) <- rownames(X)
       colnames(T.scores) <- paste("COMP",1:ncol(T.scores))
       instance$scores$X <- T.scores
 
-      rownames(U.scores) <- names.Y
+      rownames(U.scores) <- rownames(Y)
       colnames(U.scores) <- paste("COMP",1:ncol(U.scores))
       instance$scores$Y <- U.scores
 
