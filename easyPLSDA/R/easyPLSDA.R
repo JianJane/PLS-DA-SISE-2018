@@ -86,6 +86,8 @@ plsDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRU
     weighted.vip <- matrix(0, nrow = ncol(X), ncol=ncomp)
 
 
+  }else{
+    instance$selected.var <- var.names.X
   }
 
   # combine weighted VIPs with individual component VIPs
