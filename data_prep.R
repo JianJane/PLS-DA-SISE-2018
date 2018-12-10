@@ -1,6 +1,6 @@
 # loading and preparing data
 
-#library("pschy")
+library("pschy")
 data("iris")
 
 iris <- data.frame(iris)

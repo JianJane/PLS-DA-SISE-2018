@@ -8,3 +8,4 @@ mY<-as.matrix(Y_wine)
 
 mX<-scale(mX, center=TRUE, scale=TRUE)
 mY<-scale(mY, center=TRUE, scale=TRUE)
+

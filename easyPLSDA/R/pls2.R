@@ -1,3 +1,21 @@
+#' pls2 analysis function
+#'
+#' This pls2 analysis function performs partial least square analysis (PLS-DA) using either SVD or a classic itterative method.
+#'
+#' The analysis extracts the numerical and geometric features from the independet variable matrix X and its linearly dependent response matrix Y.
+#' Features of interest include the latent scores "T.scores" and "U.scores" from X and Y respectively, their respective loadings vectors "P.loadings" and "Q.loadings", along with two sets of column vectors,
+#' named "X.weights" and "Y.weights" that are needed to linearly combine the columns of X and Y into their respective latent scores. The itterative method is set as default. Both methods return the features in a list.
+#'
+#' @param X a matrix object containing the independent variables of each observation in its rows
+#' @param Y a matrix object containing the dependent variables of each observation in its rows
+#' @param ncomp= or ncomp=2 by default, denoting the number of principle components to be returned by the function
+#' @param method= or method= "classic' by default, for choosing between "classic" or "SIMPLS" for features extraction
+#' @param tol= or tol=10^-9 by default, as the convergence threshold for latent scores itteration
+#'
+#' @return A list object containing: the latent scores for X and Y, T.scores, U.scores; weights for generating latent scores,
+#' @return X.weights, Y.weights; the loadings for the two sets of latent scores P.loadings, Q.loadings
+
+
 pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
   instance <- list()
@@ -50,6 +68,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
       P.loadings[,i] <- p
       Q.loadings[,i] <- q
 
+      # deplating  E & F
       E_ <- E0 - tau_norm%*%t(p)
       F_ <- F0 - tau_norm%*%t(q)
 
@@ -89,6 +108,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
         while(is.na(x_weights)|| is.na(x_weightsold) || sum((x_weights-x_weightsold)^2)>(tol)){
 
+          #updating x_weights
           x_weightsold <- x_weights
 
           #Computation of X weights

@@ -6,7 +6,7 @@ itr_latentScores <- function(mX, mY)
 # function returns a data frame whoes columns are 't', 'u', 'w'
 # the latent scores of X and Y respectively
   
-  U <-as.matrix(rnorm(length(mY[,1])),ncol=1)
+  U <-as.matrix(mY[,1])
   
   #print(U)
   t_ <-matrix(0, length(U),1) # initialising t_ for t convergence
