@@ -1,4 +1,4 @@
-plsDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.8,tol.conv=10^-9,scale=TRUE){
+plsDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.8,tol=10^-9,scale=TRUE){
 
   instance <- list()
   extractedDF <- model.frame(formula,data)
@@ -31,8 +31,7 @@ plsDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRU
     instance$scaled <- FALSE
 
   }
-
-  computedPls <- pls2(Xp,Y,ncomp=ncomp,method=method,tol=tol.conv)
+  computedPls <- pls2(Xp,Y,ncomp=ncomp,method=method,tol=tol)
 
   #Computation of explained variance (taken from https://github.com/gastonstat/):
   R2.X <- colMeans(cor(X,computedPls$scores$X)^2)
@@ -52,10 +51,11 @@ plsDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRU
   VIP.weighted <- sqrt(rowSums(weighted.vip) * (ncol(X)/sum(R2.Y)))
 
   #Autoslection of variables if needed
-  if(auto.select.var==T){
+  if(auto.select.var==T && sum(VIP.weighted<threshold)>0){
     var.to.exclude <- VIP.weighted<threshold
     instance$selected.var <- var.names.X[VIP.weighted>=threshold]
-    X <- X[,-var.to.exclude]
+    X <- X[,colnames(X)[!var.to.exclude]]
+
     var.names.X <- colnames(X)
     #Scale X if needed
     if(scale==TRUE){
@@ -68,8 +68,9 @@ plsDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRU
 
     }
 
+    print(tol)
 
-    computedPls <- pls2(Xp,Y,ncomp=ncomp,method=method,tol=tol.conv)
+    computedPls <- pls2(Xp,Y,ncomp=ncomp,method=method,tol=)
 
     #Computation of explained variance (taken from https://github.com/gastonstat/):
     R2.X <- colMeans(cor(X,computedPls$scores$X)^2)
