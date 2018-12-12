@@ -1,10 +1,18 @@
-predict.PLSDA <- function(pls2Object,newdata){
-  newdata <- as.matrix(scale(newdata))
+predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
+
+  if(scale==TRUE){
+
+    newdata <- as.matrix(scale(newdata))
+
+  }else{
+    newdata <- newdata
+  }
   instance <- list()
-  if(pls2Object$mode=="classic" || pls2Object$mode=="test" ){
+  if(pls2Object$mode=="classic" ){
 
     Bpls <- pls2Object$weights$X%*%solve(t(pls2Object$loadings)%*%pls2Object$weights$X)%*%t(pls2Object$weights$Y)
-    pred <- newdata%*%Bpls
+
+    pred <- newdata[,pls2Object$selected.var]%*%Bpls
 
 
     instance$B.hat <- Bpls
@@ -23,7 +31,7 @@ predict.PLSDA <- function(pls2Object,newdata){
 
       Bpls <- R.loadings %*% t(pls2Object$weights$Y)
 
-      pred <- newdata%*%Bpls
+      pred <- newdata[,pls2Object$selected.var]%*%Bpls
 
       instance$B.hat <- Bpls
       instance$pred <- pred
