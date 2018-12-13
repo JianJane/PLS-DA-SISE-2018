@@ -18,7 +18,9 @@ predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
     instance$B.hat <- Bpls
     instance$pred <- pred
 
-
+    majorityvote <- apply(pred, 1, which.max)
+    majorityvote <- sapply(majorityvote, function(x){return(pls2Object$levels[x])})
+    instance$majority.vote <- majorityvote
     class(instance) <- "predict"
 
     return(instance)

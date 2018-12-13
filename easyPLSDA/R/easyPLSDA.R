@@ -1,4 +1,4 @@
-easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.8,threshold.comp=0.95,tol=10^-9,scale=TRUE){
+easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE){
 
   instance <- list()
   extractedDF <- model.frame(formula,data)
@@ -9,7 +9,7 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
 
   isfactor <- is.factor(Y)
   if(isfactor){
-
+    instance$levels <- levels(Y)
     Y <- dummies::dummy(Y)
     instance$Y.dummy <- Y
   }else{
@@ -31,7 +31,7 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
 
   if(is.null(ncomp)){
     #Test du Leave one Out
-    max.comp <- min(Matrix::rankMatrix(X)[1],nrow(X))
+    max.comp <- min(Matrix::rankMatrix(as.matrix(X))[1],nrow(X),maxi.comp)
 
     press.test <- vector(length = max.comp)
 
@@ -49,13 +49,11 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
 
     press.test[1] <- sum(press)
 
-    plslist <- list()
     #For the next composantes
     for (k in 2:max.comp) {
       press = matrix(nrow=nrow(X), ncol=ncol(Y))
       for (i in 1:nrow(X)) {
         computedPLSDA <- plsDA(Xp[-i,],Y[-i,],ncomp=k,method=method,auto.select.var=F,threshold=threshold,tol=tol)
-        plslist <- append(plslist,computedPLSDA)
         test <- Xp[i,]
         dim(test) <- c(1,length(Xp[i,]))
         colnames(test) <- colnames(X)
@@ -63,7 +61,7 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
         press[i,] <- (Y[i,]-prediction$pred)^2
       }
 
-
+      print(k)
       press.test[k] <- sum(press)
 
 
@@ -73,20 +71,21 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
       Rk[p-1] <- press.test[p]/press.test[p-1]
 
     }
-    ncomp.selected <- which(valeurs>threshold.comp)[1]+1
+    ncomp.selected <- which(Rk>threshold.comp)[1]+1
     if(auto.select.var==T){
-      computedPLSDA <- plsDA(Xp,Y,ncomp=ncomp.selected,method=method,auto.select.var=T,threshold=threshold,tol=tol)
-      instance <- append(instance,computedPLSDA)
+      computedPLSDAfin <- plsDA(Xp,Y,ncomp=ncomp.selected,method=method,auto.select.var=T,threshold=threshold,tol=tol)
+      instance <- append(instance,computedPLSDAfin)
       instance$comp.selected <- ncomp.selected
       instance$Rk <- Rk
     }else{
-      instance <- append(instance,plslist[which(valeurs>threshold.comp)[1]])
+      computedPLSDAfin <- plsDA(Xp,Y,ncomp=ncomp.selected,method=method,auto.select.var=F,threshold=threshold,tol=tol)
+      instance <- append(instance,computedPLSDAfin)
       instance$comp.selected <- ncomp.selected
       instance$Rk <- Rk
     }
 
   }else{
-    instance <- plsDA(Xp,Y,ncomp=ncomp,method=method,auto.select.var=auto.select.var,threshold=threshold,tol=tol)
+    instance <- append(instance,plsDA(Xp,Y,ncomp=ncomp,method=method,auto.select.var=auto.select.var,threshold=threshold,tol=tol))
   }
 
   class(instance) <- "PLSDA"
