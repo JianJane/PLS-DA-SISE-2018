@@ -1,8 +1,8 @@
-#' easy Partial Least Square Discriminant Analysis class generating function
+#' easy Partial Least Square Discriminant Analysis class constructor function
 #'
-#' plsDA is used to generate a class objet based on PLS-2 Discriminant analysis algorithms.
-#' Its class objects can be used to carry out PLS discriminant analysis, to predict response matrix on unseen data,
-#' to calculate the variable importance in projection "VIP", to optimise the prediction by filtering out the less relevant principal components
+#' plsDA class constructor is used to generate a class objet to perform PLS-2 Discriminant analysis on subject data sets.
+#' Its an class object contains methods functions that can be used for PLS discriminant analysis "fit.PLSDA", to predict response matrix on unseen data "predict.PLSDA",
+#' to calculate the variable importance in projection "vip.PLSDA", to optimise the prediction by filtering out the less relevant principal components
 #' to further optimise the prediction by performing VIP or Variable Importance in Projection analysis
 #'
 #' @usage plsDA(formula, data=NULL, ncomp=2, method="classic", tol=10^-9, scale=TRUE)
@@ -23,12 +23,22 @@
 #'@details The 'predict' method function of the class predicts the response matrix from an unseen set of data
 #'
 #'
+#'@example
+#'## Wine evaluation of a set of 5 wines.## Features: price, sugar, alcohol, acidity.
+#' ##Rating features: likeability, compatible with meat, compatible with dessert.
+#'X_wine<-matrix(c(7, 7, 13, 7, 4, 3, 14, 7, 10, 5, 12, 5, 16, 7, 11, 3, 13, 3, 10, 3 ),5,4, byrow=TRUE)
+#'Y_wine<-matrix(c(14, 7, 8, 10, 7, 6, 8, 5, 5, 2, 4, 7, 6, 2, 4 ),5,3, byrow=TRUE)
+#'mX<-as.matrix(X_wine)
+#'mY<-as.matrix(Y_wine)
+#'
+#'obj<-plsDA(formula,data=NULL,ncomp=2,method="classic",tol=10^-9,scale=TRUE)
+#'fit.results <- fit(obj)
+#'predict.results<- predict(obj)
+#'vip.results<-vip(obj)
+#'
+#'
 #'@import Matrix
 #'@import dummies
-#
-#'@example
-#'
-
 
 #library(Matrix)   commented out by J.BI 11/Dec/2018
 #library(dummies)  commented out by J.BI 11/Dec/2018
