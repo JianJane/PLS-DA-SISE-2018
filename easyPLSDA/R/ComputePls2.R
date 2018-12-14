@@ -11,7 +11,7 @@ computePls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
     # corss product matrix S
     M0 <- t(E0)%*%F0
-    #UDV <- svd(M0)
+
 
     #
     T.scores = matrix(ncol = ncomp,nrow = nrow(E0))

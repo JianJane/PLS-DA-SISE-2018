@@ -21,13 +21,13 @@ predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
     majorityvote <- apply(pred, 1, which.max)
     majorityvote <- sapply(majorityvote, function(x){return(pls2Object$levels[x])})
     instance$majority.vote <- majorityvote
-    class(instance) <- "predict"
+    class(instance) <- "predictionPLSDA"
 
     return(instance)
   }else{
 
-    if(pls2Object$mode=="SVD"){
-      inv_pw<-inv(t(pls2Object$loadings$X)%*%pls2Object$weights$X)
+    if(pls2Object$mode=="SIMPLS"){
+      inv_pw<-solve(t(pls2Object$loadings$X)%*%pls2Object$weights$X)
 
       R.loadings <- pls2Object$weights$X%*%inv_pw
 
@@ -38,8 +38,10 @@ predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
       instance$B.hat <- Bpls
       instance$pred <- pred
 
-
-      class(instance) <- "predict"
+      majorityvote <- apply(pred, 1, which.max)
+      majorityvote <- sapply(majorityvote, function(x){return(pls2Object$levels[x])})
+      instance$majority.vote <- majorityvote
+      class(instance) <- "predictionPLSDA"
       return(instance)
     }else{
 
