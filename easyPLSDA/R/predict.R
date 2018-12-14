@@ -1,5 +1,7 @@
 predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
-
+  if(is.null(dim(newdata))){
+    stop("New data must be a matrix or a data.frame")
+  }
   if(scale==TRUE){
 
     newdata <- as.matrix(scale(newdata))
@@ -8,6 +10,7 @@ predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
     newdata <- newdata
   }
   instance <- list()
+  instance$new.data <- newdata
   if(pls2Object$mode=="classic" ){
 
     Bpls <- pls2Object$weights$X%*%solve(t(pls2Object$loadings)%*%pls2Object$weights$X)%*%t(pls2Object$weights$Y)
