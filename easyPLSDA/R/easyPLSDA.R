@@ -11,6 +11,7 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
   if(isfactor){
     instance$levels <- levels(Y)
     Y <- dummies::dummy(Y)
+    colnames(Y) <- instance$levels
     instance$Y.dummy <- Y
   }else{
     stop("The response variable seems to not be a factor, please provide a categorical factor.")

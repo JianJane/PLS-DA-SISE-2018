@@ -91,11 +91,18 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
     colnames(U.scores) <- paste("COMP",1:ncol(U.scores))
     instance$scores$Y <- U.scores
 
+    dimnames(X.weights) = list(colnames(X), paste("w",1:ncol(X.weights),sep =""))
     instance$weights$X <- X.weights
+
+    dimnames(Y.weights) = list(colnames(Y), paste("c",1:ncol(X.weights),sep =""))
     instance$weights$Y <- Y.weights
+
+    dimnames(P.loadings) = list(colnames(X), paste("p",1:ncol(P.loadings),sep =""))
     instance$loadings$X <- P.loadings
+
+    dimnames(Q.loadings) = list(colnames(Y), paste("q",1:ncol(Q.loadings),sep =""))
     instance$loadings$Y <- Q.loadings
-    instance$mode <- "SVD"
+    instance$mode <- "SIMPLS"
 
 
   }else{
@@ -169,9 +176,15 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
       colnames(U.scores) <- paste("COMP",1:ncol(U.scores))
       instance$scores$Y <- U.scores
 
+      dimnames(X.weights) = list(colnames(X), paste("w",1:ncol(X.weights),sep =""))
       instance$weights$X <- X.weights
+
+      dimnames(Y.weights) = list(colnames(Y), paste("c",1:ncol(X.weights),sep =""))
       instance$weights$Y <- Y.weights
+
+      dimnames(P.loadings) = list(colnames(X), paste("p",1:ncol(P.loadings),sep =""))
       instance$loadings <- P.loadings
+
       instance$B.mat <- B
       instance$mode <- "classic"
     }else{
