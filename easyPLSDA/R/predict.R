@@ -21,7 +21,7 @@ predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
     majorityvote <- apply(pred, 1, which.max)
     majorityvote <- sapply(majorityvote, function(x){return(pls2Object$levels[x])})
     instance$majority.vote <- majorityvote
-    class(instance) <- "predictionPLSDA"
+    class(instance) <- "PLSDAprediction"
 
     return(instance)
   }else{
@@ -41,7 +41,7 @@ predict.PLSDA <- function(pls2Object,newdata,scale=TRUE){
       majorityvote <- apply(pred, 1, which.max)
       majorityvote <- sapply(majorityvote, function(x){return(pls2Object$levels[x])})
       instance$majority.vote <- majorityvote
-      class(instance) <- "predictionPLSDA"
+      class(instance) <- "PLSDAprediction"
       return(instance)
     }else{
 

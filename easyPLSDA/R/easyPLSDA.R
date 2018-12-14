@@ -87,6 +87,7 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
 
   }else{
     instance <- append(instance,plsDA(Xp,Y,ncomp=ncomp,method=method,auto.select.var=auto.select.var,threshold=threshold,tol=tol))
+    instance$comp.selected <- ncomp
   }
 
   class(instance) <- "PLSDA"

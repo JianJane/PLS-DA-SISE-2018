@@ -69,7 +69,6 @@ plsDA <- function(X,Y,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.
   #Creation of output
   instance$X <- X
   instance$Y <- Y
-  instance$levels <- levels(Y)
   instance <- append(instance,computedPls)
   instance$explained.var$X <- R2.X
   instance$explained.var$Y <- R2.Y
