@@ -60,15 +60,17 @@
 #'@import Matrix
 #'@import dummies
 
-easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE){
+easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE){
+
 
   instance <- list()
+
+  #Extraction of the formula variables in two part (explanatory varaibles X and response Y)
   extractedDF <- model.frame(formula,data)
   X <- extractedDF[,-1]
-
   Y <- extractedDF[,1]
 
-
+  #Verification step
   isfactor <- is.factor(Y)
   if(isfactor){
     instance$levels <- levels(Y)
@@ -92,14 +94,17 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
 
   }
 
+
   if(is.null(ncomp)){
-    #Test du Leave one Out
+    #Automatic selection by Leave One Out cross validation
+
+    #maxi.comp (10) model by default to avoid Out of Memory Exception
     max.comp <- min(Matrix::rankMatrix(as.matrix(X))[1],nrow(X),maxi.comp)
 
     press.test <- vector(length = max.comp)
-
     press = matrix(nrow=nrow(X), ncol=ncol(Y))
-    #For the first composante :
+
+    #For the first component:
     for (i in 1:nrow(X)) {
       computedPLSDA <- plsDA(Xp[-i,],Y[-i,],ncomp=1,method=method,auto.select.var=F,threshold=threshold,tol=tol)
       test <- Xp[i,]
@@ -112,7 +117,7 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
 
     press.test[1] <- sum(press)
 
-    #For the next composantes
+    #For the next components:
     for (k in 2:max.comp) {
       press = matrix(nrow=nrow(X), ncol=ncol(Y))
       for (i in 1:nrow(X)) {
@@ -129,6 +134,8 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
 
 
     }
+
+    #We use the Rk statistic to select the optimal number of components
     Rk <- vector(length = max.comp-1)
     for (p in 2:length(press.test)) {
       Rk[p-1] <- press.test[p]/press.test[p-1]
@@ -148,7 +155,10 @@ easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var
     }
 
   }else{
+
+    #For manual selection of components number
     instance <- append(instance,plsDA(Xp,Y,ncomp=ncomp,method=method,auto.select.var=auto.select.var,threshold=threshold,tol=tol))
+    instance$comp.selected <- ncomp
   }
 
   class(instance) <- "PLSDA"
