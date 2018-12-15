@@ -33,13 +33,24 @@
 #'@details The 'predict' method function of the class predicts the response matrix from an unseen set of data
 #'
 #'
-#'@return
-#'
-#'easyPLSDA returns an object of class "easyPLSDA"
-#'
+#'@return easyPLSDA returns an object of class "easyPLSDA"
 #'The function summary is used to print a summary of the analysis results.
-#'
 #'An object of class 'easyPLSDA' returns a list containing the following components:
+#'
+#' \item{scores}{Scores matrices of X and Y variables projected into the new space}
+#' \item{weights}{Matrices of weights for both X and Y variables}
+#' \item{loadings}{One (or two for SIMPLS method) matrix of loadings}
+#' \item{B.mat}{Only for "classic" mode. Matrix of "b" coefficients, result of the scalar product between X latent vectors and Y latent vectors}
+#' \item{mode}{The mode used to compute the matrices}
+#' \item{selected.var}{Names of explanatory variables selected}
+#' \item{X}{Matrix of explanatory variables}
+#' \item{scores}{Scores matrices of X and Y variables projected into the new space}
+#' \item{weights}{Matrices of weights for both X and Y variables}
+#' \item{loadings}{One (or two for SIMPLS method) matrix of loadings}
+#' \item{mode}{The mode used to compute the matrices}
+#' \item{explained.var}{The explained variance by latent vectors of X and Y}
+#' \item{VIP}{Matrix of Variable Importance in Projection}
+#'
 #'
 #'
 #'
