@@ -1,19 +1,36 @@
+#' pls2 is an intern function of easyPLSDA package used to compute the PLS matrices using state of the art algorithms
+#'
+#' @param X A matrix containing the explanatory variables of the model.
+#' @param Y A dummy matrix of the response classes corresponding to the X observations.
+#' @param ncomp The required number of components to compute.
+#' @param method The method that will be used to compute the different matrices used in regression.
+#'  Default "classic" is for PLS2 algorithm, "SIMPLS" is the other method based on matrix SVD.
+#' @param tol The convergence threshold for latent scores computation, only for "classic" method. Default: 10^-9.
+#'
+#' @return PLS2Reg S3 object.
+#' \item{scores}{Scores matrices of X and Y variables projected into the new space}
+#' \item{weights}{Matrices of weights for both X and Y variables}
+#' \item{loadings}{One (or two for SIMPLS method) matrix of loadings}
+#' \item{B.mat}{Only for "classic" mode. Matrix of "b" coefficients, result of the scalar product between X latent vectors and Y latent vectors}
+#' \item{mode}{The mode used to compute the matrices}
+#'
+#'
+#'
 pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
   instance <- list()
 
   if(method=="SIMPLS"){
-    # ---------------------------------PLS-2 Algorithm using SVD-------------------------------
+    # ---------------------------------SIMPLS algorithm using SVD-------------------------------
     # -----------------------------------------------------------------------------------------
 
     E0 <- X
     F0 <- Y
 
-    # corss product matrix S
+    # cross product matrix S
     M0 <- t(E0)%*%F0
-    #UDV <- svd(M0)
 
-    #
+    #Matrices init
     T.scores = matrix(ncol = ncomp,nrow = nrow(E0))
     U.scores = matrix(ncol = ncomp,nrow = nrow(F0))
 
@@ -25,7 +42,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
 
 
-
+    #Computation of the different matrices
     for(i in 1:ncomp){
 
       UDV <- svd(M0)
@@ -50,6 +67,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
       P.loadings[,i] <- p
       Q.loadings[,i] <- q
 
+      #Deflation
       E_ <- E0 - tau_norm%*%t(p)
       F_ <- F0 - tau_norm%*%t(q)
 
@@ -63,6 +81,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
     }
 
+    #Formatting output
     rownames(T.scores) <- rownames(X)
     colnames(T.scores) <- paste("COMP",1:ncol(T.scores))
     instance$scores$X <- T.scores
@@ -87,6 +106,10 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
 
   }else{
     if(method=="classic"){
+      # ----------------------------Classic method using PLS2 algorithm -------------------------
+      # -----------------------------------------------------------------------------------------
+
+      #Subfunction used to intermediary computation of the different vectors
       complatentscores <- function(X,Y){
 
         #Intialisation
@@ -94,6 +117,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
         x_weights <- NA
         x_weightsold <- NA
 
+        #Convergence loop
         while(is.na(x_weights)|| is.na(x_weightsold) || sum((x_weights-x_weightsold)^2)>(tol)){
 
           x_weightsold <- x_weights
@@ -128,6 +152,7 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
       Y.weights = matrix(ncol=ncomp,nrow=ncol(F0))
       B = matrix(0,ncol=ncomp,nrow=ncomp)
 
+      #Computation of the different matrices
       for (i in 1:ncomp) {
         latentlist <- complatentscores(E0,F0)
 
@@ -142,12 +167,13 @@ pls2 <- function(X,Y,ncomp=2,method="classic",tol=10^-9){
         p <- t(E0)%*%latentlist$t_scores/sum(latentlist$t_scores^2)
         P.loadings[,i] <-p
 
+        #Matrix deflation
         E0 <- E0-(latentlist$t_scores%*%t(p))
         F0 <- F0-(latentlist$t_scores%*%t(latentlist$y_weights))
 
       }
 
-
+      #Formatting output
       rownames(T.scores) <- rownames(X)
       colnames(T.scores) <- paste("COMP",1:ncol(T.scores))
       instance$scores$X <- T.scores

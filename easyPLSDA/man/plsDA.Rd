@@ -25,7 +25,7 @@ Variables with weighted VIP under this threshold will be removed if auto.select.
 \item{tol}{The convergence threshold for latent scores computation, only for "classic" method. Default: 10^-9.}
 }
 \value{
-S3 object of class plsDA
+S3 object of class plsDA.
 \item{selected.var}{Names of explanatory variables selected}
 \item{X}{Matrix of explanatory variables}
 \item{scores}{Scores matrices of X and Y variables projected into the new space}
