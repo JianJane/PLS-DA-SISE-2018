@@ -4,31 +4,69 @@
 \alias{easyPLSDA}
 \title{easy Partial Least Square Discriminant Analysis class constructor function}
 \usage{
-easyPLSDA(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE)
+easyPLSDA(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.models=10,tol=10^-9,scale=TRUE)
 }
 \arguments{
-\item{formula}{an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. Similar to lm function.}
+\item{formula}{An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. Similar to lm function.}
 
-\item{data}{the dataset corresponding to given formula, must be coerced to a data.frame.}
+\item{data}{A data matrix or data frame object containing observations data matrix X and response data matrix Y, NULL by default.}
 
-\item{ncomp}{denoting the number of principal components to be used in the regression.
-If NULL, the function choose the optimal number of components. Default: 2.}
+\item{ncomp}{Positive non zero integer, denoting the number of principale components to be returned by the function, 2 by default.
+If NULL, the function will compute the optimal number of components by Leave One Out Cross Validation and using the Rk Criterium.}
 
-\item{method}{The method that will be used to compute the different matrices used in regression.
-Default "classic" is for PLS2 algorithm, "SIMPLS" is the other method based on matrix SVD.}
+\item{method}{Charactor string, "classic' by default, "SIMPLS" is the other method based on matrix SVD.}
 
-\item{tol}{The convergence threshold for latent scores computation, only for "classic" method. Default: 10^-9.}
+\item{auto.select.var}{Logical. Option to enable automatic selection of the variables explaining the most amount of accumulated variance.}
 
-\item{scale}{If TRUE (the default) after being column centered, X and Y can be further normalised with the standard deviation of each column.}
+\item{threshold}{Numeric, high pass threshold for selecting important variables in terms of their explained variance in response matrix Y.
+0.8 by default.}
+
+\item{threshold.comp}{Numeric, Threshold used for R of Wold criterium in automatic selection of components.
+0.95 by default, corresponding to the adjusted R criterium.}
+
+\item{maxi.models}{Numeric. The maximum number of models to be tested in cross validation for finding the optimal number of components. 10 by default.
+If the train dataset allows less than 10 components, then the function test only the available number of components.}
+
+\item{tol}{Numeric, the convergence threshold for latent scores computation, only for "classic" method. Default: 10^-9.}
+
+\item{scale}{Logical,if TRUE (the default) after being column centered, X and Y can be further normalised with the standard deviation of each column.}
+}
+\value{
+easyPLSDA returns an object of class "easyPLSDA"
+An object of class 'easyPLSDA' returns a list containing the following elements:
+\item{Y}{Factor.The factor of the categorical response variable (Y).}
+\item{levels}{Character vector of classes names.}
+\item{Y.dummy}{Numeric matrix.The dummy matrix of the response (Y).}
+\item{scaled}{Logical, TRUE if the explanatory variables matrix X was scaled (centered and normalized).}
+\item{selected.var}{Character vector. The names of the selected explanatory variables in the PLS regression computation.}
+\item{X}{Numeric matrix. The matrix of explanatory variables.}
+\item{scores}{List of two numeric matrices. Scores matrices of X and Y variables projected into the new space.}
+\item{weights}{Matrices of weights for both X and Y variables.}
+\item{loadings}{One (or two for SIMPLS method) matrix of loadings.}
+\item{B.mat}{Only for "classic" mode. Matrix of "b" coefficients, result of the scalar product between X latent vectors and Y latent vectors.}
+\item{mode}{The mode used to compute the matrices.}
+\item{explained.var}{Explained variance by latent vectors of X and Y.}
+\item{VIP}{Numeric matrix. Matrix of Variable Importance in Projection.}
+\item{comp.selected}{Numeric. The number of components of the fitted model.}
 }
 \description{
 easyPLSDA class constructor is used to generate a class object to perform PLS-2 Discriminant analysis on subject data sets.
-The returned object contains method to predict response matrix on unseen data : predict and  a summary() method.
+All of the analysis is performed upon instantiating the class constructor along with the target data set, the results are returned as a list.
+The prediction is realised separately by calling the function 'predict', results are returned in a list. A summary method is also available.
 }
 \details{
 The 'pls2' method function of the class extracts the numerical and geometric features from the independet variable matrix X and its linearly dependent response matrix Y.
 Features of interest include the latent scores "T.scores" and "U.scores" from X and Y respectively, their respective loadings vectors "P.loadings" and "Q.loadings", along with two sets of column vectors,
 named "X.weights" and "Y.weights" that are needed to linearly combine the columns of X and Y into their respective latent scores. The itterative method is set as default. Both methods return the features in a list.
+Aspects of analysis included in the returned object include:
+1.The extraction of latent score matrices of X and Y, refered to as scores$X and scores$Y.
+2.Their respective loadings matrices, refered to as P.loadings (loadings$X) and Q.loadings (only for SIMPLS, loadings$Y). Together with two sets of column vectors,
+named "X.weights" and "Y.weights" that are needed to linearly combine the columns of X and Y into their respective latent scores.
 
-The 'predict' method function of the class predicts the response matrix from an unseen set of data
+The optimal number of scores or components analysis is performed by tuning the accumulated variance threshold, see 'threshold.comp' in Arguments.
+Moreover, Variable importance in projection (VIP) scores are calculated and an option of variable auto selection based on VIP is availabe, see 'auto.select.var' in arguments.
+
+
+Note: Two methods are made available for this extraction step. The iterative method based on NIPALS PLS2 is refered to as the 'classic' method.
+The "SIMPLS" method uses SVD decomposition function in R.
 }

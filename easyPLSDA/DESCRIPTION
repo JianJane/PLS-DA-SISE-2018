@@ -1,11 +1,11 @@
 Package: easyPLSDA
 Type: Package
 Title: easyPLSDA performs Partial Least Square regression for discriminant analysis purpose
-Version: 0.2.3
+Version: 0.2.4
 Author: Jianhui Bi, Rudy Haziza and Luis VENTURA
 Maintainer: Jianhui Bi <jianhui.bi@univ-lyon2.fr>, Rudy Haziza <rudy.haziza@univ-lyon2.fr> and Luis VENTURA <luis.ventura@univ-lyon2.fr>
 Description: easyPLSDA performs Partial Least Square regression for discriminant analysis.The main function is easyPLSDA. This function create a plsDA S3 object with several attributes like scores, weights and loadings matrices.    easyPLSDA also use a automatic variable selection process (can be switched off) based on Variable Importance in Projection and can select automaticaly the optimal number of composantes.
-License: What license is it under?
+License: MIT License
 Encoding: UTF-8
 LazyData: true
 Imports:
