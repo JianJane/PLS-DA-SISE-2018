@@ -1,27 +1,46 @@
 #' easy Partial Least Square Discriminant Analysis class constructor function
 #'
-#' easyPLSDA class constructor is used to generate a class object to perform PLS-2 Discriminant analysis on subject data sets.
-#' The returned object contains method to predict response matrix on unseen data : predict and  a summary() method.
+#' easyPLSDA class constructor is to generate a class objet that performs PLS-2 Discriminant analysis on subject data sets.
+#' It is a class object contains functions for different aspects of analysis and a class method for prediction.
+#' All of the analysis is performed upon instantiating the class constructor along with the target data set, the results returned as lists.
+#' The prediction is realised separately by calling the method function 'predict', results are returned in a list.
 #'
-#' @usage easyPLSDA(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE)
-#'
-#'
-#'
-#' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. Similar to lm function.
-#' @param data the dataset corresponding to given formula, must be coerced to a data.frame.
-#' @param ncomp denoting the number of principal components to be used in the regression.
-#' If NULL, the function choose the optimal number of components. Default: 2.
-#' @param method The method that will be used to compute the different matrices used in regression.
-#' Default "classic" is for PLS2 algorithm, "SIMPLS" is the other method based on matrix SVD.
-#' @param tol The convergence threshold for latent scores computation, only for "classic" method. Default: 10^-9.
-#' @param scale If TRUE (the default) after being column centered, X and Y can be further normalised with the standard deviation of each column.
+#' Aspects of analysis imbeded in the constructor include:
+#' Note: Two methods are made available for this extraction step. The iterative method based on NIPALS PLS2 is refered to as the 'classic' method.
+#' The "SIMPLS" method uses SVD decomposition function in R.
+#' 1.The extraction of latent score matrices of X and Y, refered to as T.scores and U.scores.
+#' Their respective loadings matrices, refered to as P.loadings and Q.loadings. Together with two sets of column vectors,
+#' named "X.weights" and "Y.weights" that are needed to linearly combine the columns of X and Y into their respective latent scores.
+#' 2.The optimal number of scores or components analysis is performed by tuning the accumulated variance threshold, see 'threshold.comp' in Arguments.
+#' 3.Variable importance in projection (VIP) scores are calculated and an option of variable auto selection based on VIP is availabe, see 'auto.select.var' in Arguments.
 #'
 #'
-#'@details The 'pls2' method function of the class extracts the numerical and geometric features from the independet variable matrix X and its linearly dependent response matrix Y.
-#' Features of interest include the latent scores "T.scores" and "U.scores" from X and Y respectively, their respective loadings vectors "P.loadings" and "Q.loadings", along with two sets of column vectors,
-#' named "X.weights" and "Y.weights" that are needed to linearly combine the columns of X and Y into their respective latent scores. The itterative method is set as default. Both methods return the features in a list.
+#' @usage easyPLSDA(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE)
+#'
+#' @param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under ‘Details’.
+#' @param data data = NULL by default, a data matrix or data frame object containing observations data matrix X and response data matrix Y
+#' @param ncomp ncomp=2 by default, denoting the number of principle components to be returned by the function
+#' @param method method= "classic' by default, "SIMPLS" is the other method based on matrix diagnolisation SVD
+#' @param auto.select.var Option for automatically selecting the variables explaining the most amount of accumulated variance in response matrix Y
+#' @param threshold threshold = 0.8 by default, high pass threshold for selecting important variables in terms of their explained variance in response matrix Y
+#' @param threshold.comp threshold.comp = 0.95 by default high pass threshold for selecting principal components explaining most of the variance
+#' @param maxi.comp maxi.comp = 10 by default the maximum number of scores to be included in cross validation for finding the optimal number of scores
+#' @param tol tol=10^-9 by default, as the convergence threshold for latent scores itteration
+#' @param scale scale=TRUE by default, after being column centered, X and Y can be further normalised with the standard deviation of each column
+#'
+#'
 #'
 #'@details The 'predict' method function of the class predicts the response matrix from an unseen set of data
+#'
+#'
+#'@return
+#'
+#'easyPLSDA returns an object of class "easyPLSDA"
+#'
+#'The function summary is used to print a summary of the analysis results.
+#'
+#'An object of class 'easyPLSDA' returns a list containing the following components:
+#'
 #'
 #'
 #'@example
@@ -38,6 +57,8 @@
 #'vip.results<-vip(obj)
 #'
 #'
+#'@import Matrix
+#'@import dummies
 
 easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE){
 
