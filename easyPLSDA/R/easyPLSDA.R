@@ -18,25 +18,25 @@
 #' @usage easyPLSDA(formula,data=NULL,ncomp=2,method="classic",auto.select.var=TRUE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE)
 #'
 #' @param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under ‘Details’.
-#' @param data data = NULL by default, a data matrix or data frame object containing observations data matrix X and response data matrix Y
-#' @param ncomp ncomp=2 by default, denoting the number of principle components to be returned by the function
-#' @param method method= "classic' by default, "SIMPLS" is the other method based on matrix diagnolisation SVD
-#' @param auto.select.var Option for automatically selecting the variables explaining the most amount of accumulated variance in response matrix Y
-#' @param threshold threshold = 0.8 by default, high pass threshold for selecting important variables in terms of their explained variance in response matrix Y
-#' @param threshold.comp threshold.comp = 0.95 by default high pass threshold for selecting principal components explaining most of the variance
-#' @param maxi.comp maxi.comp = 10 by default the maximum number of scores to be included in cross validation for finding the optimal number of scores
-#' @param tol tol=10^-9 by default, as the convergence threshold for latent scores itteration
-#' @param scale scale=TRUE by default, after being column centered, X and Y can be further normalised with the standard deviation of each column
+#' @param data Data matrix or data frame object, data = NULL by default,  containing observations data matrix X and response data matrix Y
+#' @param ncomp Positive non zero integer, ncomp=2 by default, denoting the number of principle components to be returned by the function
+#' @param method Charactor string, method= "classic' by default, "SIMPLS" is the other method based on matrix diagnolisation SVD
+#' @param auto.select.var Logic, TRUE by default, Option for automatically selecting the variables explaining the most amount of accumulated variance in response matrix Y
+#' @param threshold Numeric, threshold = 0.8 by default, high pass threshold for selecting important variables in terms of their explained variance in response matrix Y
+#' @param threshold.comp Numeric, threshold.comp = 0.95 by default, high pass threshold for selecting principal components explaining most of the variance
+#' @param maxi.comp Positive non zero integer, maxi.comp = 10 by default, the maximum number of scores to be included in cross validation for finding the optimal number of scores
+#' @param tol Numeric, tol=10^-9 by default, as the convergence threshold for latent scores itteration
+#' @param scale Logic, scale=TRUE by default, after being column centered, X and Y can be further normalised with the standard deviation of each column
 #'
 #'
 #'
-#'@details The 'predict' method function of the class predicts the response matrix from an unseen set of data
+#'@details The input data for prediction will be centered and scaled
 #'
 #'
 #'@return easyPLSDA returns an object of class "easyPLSDA"
 #'The function summary is used to print a summary of the analysis results.
 #'An object of class 'easyPLSDA' returns a list containing the following components:
-#'
+#'\itemize{
 #' \item{scores}{Scores matrices of X and Y variables projected into the new space}
 #' \item{weights}{Matrices of weights for both X and Y variables}
 #' \item{loadings}{One (or two for SIMPLS method) matrix of loadings}
@@ -46,26 +46,31 @@
 #' \item{X}{Matrix of explanatory variables}
 #' \item{explained.var}{The explained variance by latent vectors of X and Y}
 #' \item{VIP}{Matrix of Variable Importance in Projection}
-#'
+#'}
 #'
 #'
 #'
 #'@example
-#'## Wine evaluation of a set of 5 wines.## Features: price, sugar, alcohol, acidity.
-#' ##Rating features: likeability, compatible with meat, compatible with dessert.
-#'X_wine<-matrix(c(7, 7, 13, 7, 4, 3, 14, 7, 10, 5, 12, 5, 16, 7, 11, 3, 13, 3, 10, 3 ),5,4, byrow=TRUE)
-#'Y_wine<-matrix(c(14, 7, 8, 10, 7, 6, 8, 5, 5, 2, 4, 7, 6, 2, 4 ),5,3, byrow=TRUE)
-#'mX<-as.matrix(X_wine)
-#'mY<-as.matrix(Y_wine)
+#'\dontrun{
 #'
-#'obj<-plsDA(formula,data=NULL,ncomp=2,method="classic",tol=10^-9,scale=TRUE)
-#'fit.results <- fit(obj)
-#'predict.results<- predict(obj)
-#'vip.results<-vip(obj)
+#'    data.iris <- data("iris")
+#'    obj<-easyPLSDA(formula,data=data.iris,auto.select.var=TRUE,threshold.comp=0.85,maxi.comp=4,tol=10^-9,scale=TRUE)
+#'
+#'    print(obj$VIP)
+#'    print(obj$explained.var$X)
+#'    summary(obj)
+#'
+#'    predict.iris<-predict(obj)
+#'    summary(predict.iris)
+#'    }
+#'
+#'@author Alexandra Bi, Rudy Hazizza, Luis Ventura
 #'
 #'
 #'@import Matrix
 #'@import dummies
+#'
+#'@export
 
 easyPLSDA <- function(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.comp=10,tol=10^-9,scale=TRUE){
 
