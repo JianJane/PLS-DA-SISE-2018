@@ -4,7 +4,7 @@ summary.PLSDA <- function(objectPLSDA){
   cat(objectPLSDA$levels,sep=", ","\n\n")
   cat("Number of explanatory variables : ",ncol(objectPLSDA$X),".\n",sep="")
   cat("Selected variables : ",length(objectPLSDA$selected.var),".\n\n",sep="")
-  cat("Number of composantes : ",objectPLSDA$comp.selected,".\n",sep="")
+  cat("Number of components : ",objectPLSDA$comp.selected,".\n",sep="")
   cat("Explained variance :\n\n",sep="")
   print(objectPLSDA$explained.var)
   cat("VIP :\n")

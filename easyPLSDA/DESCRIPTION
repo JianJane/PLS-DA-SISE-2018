@@ -11,3 +11,4 @@ LazyData: true
 Imports:
   Matrix,
   dummies
+RoxygenNote: 6.1.1
