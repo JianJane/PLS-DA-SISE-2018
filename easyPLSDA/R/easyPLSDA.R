@@ -1,10 +1,20 @@
+#'
 #' easy Partial Least Square Discriminant Analysis class constructor function
 #'
 #' easyPLSDA class constructor is used to generate a class object to perform PLS-2 Discriminant analysis on subject data sets.
 #' All of the analysis is performed upon instantiating the class constructor along with the target data set, the results are returned as a list.
 #' The prediction is realised separately by calling the function 'predict', results are returned in a list. A summary method is also available.
 #'
-#' @usage easyPLSDA(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.models=10,tol=10^-9,scale=TRUE)
+#' @usage easyPLSDA(formula,
+#' data=NULL,
+#' ncomp=2,
+#' method="classic",
+#' auto.select.var=FALSE,
+#' threshold=0.8,
+#' threshold.comp=0.95,
+#' maxi.models=10,
+#' tol=10^-9,
+#' scale=TRUE)
 #'
 #'
 #'
@@ -13,7 +23,7 @@
 #' @param ncomp Positive non zero integer, denoting the number of principale components to be returned by the function, 2 by default.
 #' If NULL, the function will compute the optimal number of components by Leave One Out Cross Validation and using the Rk Criterium.
 #' @param method Charactor string, "classic' by default, "SIMPLS" is the other method based on matrix SVD.
-#' @param auto.select.var Logical. Option to enable automatic selection of the variables explaining the most amount of accumulated variance.
+#' @param auto.select.var Logical. Option to enable automatic selection of the variables explaining the most amount of accumulated variance. FALSE by default.
 #' @param threshold Numeric, high pass threshold for selecting important variables in terms of their explained variance in response matrix Y.
 #'  0.8 by default.
 #' @param threshold.comp Numeric, Threshold used for R of Wold criterium in automatic selection of components.
@@ -56,18 +66,18 @@
 #' \item{VIP}{Numeric matrix. Matrix of Variable Importance in Projection.}
 #' \item{comp.selected}{Numeric. The number of components of the fitted model.}
 #'
-#'@example
-#'## Wine evaluation of a set of 5 wines.## Features: price, sugar, alcohol, acidity.
-#' ##Rating features: likeability, compatible with meat, compatible with dessert.
-#'X_wine<-matrix(c(7, 7, 13, 7, 4, 3, 14, 7, 10, 5, 12, 5, 16, 7, 11, 3, 13, 3, 10, 3 ),5,4, byrow=TRUE)
-#'Y_wine<-matrix(c(14, 7, 8, 10, 7, 6, 8, 5, 5, 2, 4, 7, 6, 2, 4 ),5,3, byrow=TRUE)
-#'mX<-as.matrix(X_wine)
-#'mY<-as.matrix(Y_wine)
+#'@export
+#'@examples
 #'
-#'obj<-plsDA(formula,data=NULL,ncomp=2,method="classic",tol=10^-9,scale=TRUE)
-#'fit.results <- fit(obj)
-#'predict.results<- predict(obj)
-#'vip.results<-vip(obj)
+#' #Iris example
+#'
+#' train <- sample.int(nrow(iris),100)
+#' PLSobj <- easyPLSDA(Species~.,iris[train,],ncomp=3)
+#' PLSpred <- predict(PLSobj,iris[-train,1:4])
+#'
+#' table(iris[-train,5],PLSpred$majority.vote)
+#'
+#'
 #'
 #'
 

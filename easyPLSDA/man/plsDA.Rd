@@ -26,14 +26,14 @@ Variables with weighted VIP under this threshold will be removed if auto.select.
 }
 \value{
 S3 object of class plsDA.
-\item{selected.var}{Names of explanatory variables selected}
-\item{X}{Matrix of explanatory variables}
-\item{scores}{Scores matrices of X and Y variables projected into the new space}
-\item{weights}{Matrices of weights for both X and Y variables}
-\item{loadings}{One (or two for SIMPLS method) matrix of loadings}
-\item{mode}{The mode used to compute the matrices}
-\item{explained.var}{The explained variance by latent vectors of X and Y}
-\item{VIP}{Matrix of Variable Importance in Projection}
+\item{selected.var}{Names of explanatory variables selected.}
+\item{X}{Matrix of explanatory variables.}
+\item{scores}{Scores matrices of X and Y variables projected into the new space.}
+\item{weights}{Matrices of weights for both X and Y variables.}
+\item{loadings}{One (or two for SIMPLS method) matrix of loadings.}
+\item{mode}{The mode used to compute the matrices.}
+\item{explained.var}{The explained variance by latent vectors of X and Y.}
+\item{VIP}{Matrix of Variable Importance in Projection.}
 }
 \description{
 plsDA function is an internal function of package easyPLSDA used to perform PLS-DA.

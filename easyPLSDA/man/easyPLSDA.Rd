@@ -4,7 +4,16 @@
 \alias{easyPLSDA}
 \title{easy Partial Least Square Discriminant Analysis class constructor function}
 \usage{
-easyPLSDA(formula,data=NULL,ncomp=2,method="classic",auto.select.var=FALSE,threshold=0.8,threshold.comp=0.95,maxi.models=10,tol=10^-9,scale=TRUE)
+easyPLSDA(formula,
+data=NULL,
+ncomp=2,
+method="classic",
+auto.select.var=FALSE,
+threshold=0.8,
+threshold.comp=0.95,
+maxi.models=10,
+tol=10^-9,
+scale=TRUE)
 }
 \arguments{
 \item{formula}{An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. Similar to lm function.}
@@ -16,7 +25,7 @@ If NULL, the function will compute the optimal number of components by Leave One
 
 \item{method}{Charactor string, "classic' by default, "SIMPLS" is the other method based on matrix SVD.}
 
-\item{auto.select.var}{Logical. Option to enable automatic selection of the variables explaining the most amount of accumulated variance.}
+\item{auto.select.var}{Logical. Option to enable automatic selection of the variables explaining the most amount of accumulated variance. FALSE by default.}
 
 \item{threshold}{Numeric, high pass threshold for selecting important variables in terms of their explained variance in response matrix Y.
 0.8 by default.}
@@ -69,4 +78,18 @@ Moreover, Variable importance in projection (VIP) scores are calculated and an o
 
 Note: Two methods are made available for this extraction step. The iterative method based on NIPALS PLS2 is refered to as the 'classic' method.
 The "SIMPLS" method uses SVD decomposition function in R.
+}
+\examples{
+
+#Iris example
+
+train <- sample.int(nrow(iris),100)
+PLSobj <- easyPLSDA(Species~.,iris[train,],ncomp=3)
+PLSpred <- predict(PLSobj,iris[-train,1:4])
+
+table(iris[-train,5],PLSpred$majority.vote)
+
+
+
+
 }
